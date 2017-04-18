@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
@@ -10,7 +11,9 @@ public class GameController : MonoBehaviour {
     public float espera;
     public float tempoDestruicao;
     public GameObject menu;
-    public GameObject canvas;
+    public GameObject painelMenu;
+    private int pontos;
+    public Text txtPontos;
 
     public static GameController instancia = null;
     private void Awake() {
@@ -37,11 +40,10 @@ public class GameController : MonoBehaviour {
         }
     }
 
-        public void PlayerComecou()
-    {
+        public void PlayerComecou() {
         estado = Estado.Jogando;
         menu.SetActive(false);
-        canvas.SetActive(false);
+        painelMenu.SetActive(false);
         StartCoroutine(GerarObstaculos());
     }
 
