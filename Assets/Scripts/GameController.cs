@@ -7,6 +7,11 @@ public class GameController : MonoBehaviour {
 
     public Estado estado { get; private set; }
 
+
+    public void incrementarPontos(int x) {
+        atualizarPontos(pontos + x);
+    }
+
     public GameObject obstaculo;
     public float espera;
     public float tempoDestruicao;
@@ -14,6 +19,10 @@ public class GameController : MonoBehaviour {
     public GameObject painelMenu;
     private int pontos;
     public Text txtPontos;
+    private void atualizarPontos(int x) {
+        pontos = x;
+        txtPontos.text = "" + x;
+    }
 
     public static GameController instancia = null;
     private void Awake() {
@@ -44,8 +53,10 @@ public class GameController : MonoBehaviour {
         estado = Estado.Jogando;
         menu.SetActive(false);
         painelMenu.SetActive(false);
+        atualizarPontos(0);
         StartCoroutine(GerarObstaculos());
     }
+
 
     public void PlayerMorreu() {
         estado = Estado.GameOver;
