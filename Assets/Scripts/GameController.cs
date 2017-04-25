@@ -11,12 +11,14 @@ public class GameController : MonoBehaviour {
     public void incrementarPontos(int x) {
         atualizarPontos(pontos + x);
     }
-
+    public Text txtMaiorPontuacao;
+    public GameObject gameOverPanel;
+    public GameObject pontosPanel;
     public GameObject obstaculo;
     public float espera;
     public float tempoDestruicao;
-    public GameObject menu;
-    public GameObject painelMenu;
+    public GameObject menuCamera;
+    public GameObject menuPanel;
     private int pontos;
     public Text txtPontos;
     private void atualizarPontos(int x) {
@@ -35,9 +37,24 @@ public class GameController : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
     }
 
+    public void PlayerVoltou() {
+        estado = Estado.AguardandoComecar;
+        menuCamera.SetActive(true);
+        menuPanel.SetActive(true);
+        gameOverPanel.SetActive(false);
+        pontosPanel.SetActive(false);
+        GameObject.Find("Nave").GetComponent<PlayerControllerFINAL>().recomecar();
+    }
+
+
     void Start () {
         estado = Estado.AguardandoComecar;
-	}
+        PlayerPrefs.SetInt("HighScore", 0);
+        menuCamera.SetActive(true);
+        menuPanel.SetActive(true);
+        gameOverPanel.SetActive(false);
+        pontosPanel.SetActive(false);
+    }
 	
 
 	IEnumerator GerarObstaculos() {
@@ -51,15 +68,21 @@ public class GameController : MonoBehaviour {
 
         public void PlayerComecou() {
         estado = Estado.Jogando;
-        menu.SetActive(false);
-        painelMenu.SetActive(false);
+        menuCamera.SetActive(false);
+        menuPanel.SetActive(false);
+        pontosPanel.SetActive(true);
         atualizarPontos(0);
         StartCoroutine(GerarObstaculos());
     }
 
 
-    public void PlayerMorreu() {
+        public void PlayerMorreu() {
         estado = Estado.GameOver;
-    } 
-		
+        if (pontos > PlayerPrefs.GetInt("HighScore")) {
+            PlayerPrefs.SetInt("HighScore", pontos);
+            txtMaiorPontuacao.text = "" + pontos;
+        }
+        gameOverPanel.SetActive(true);
+    }
+
 }
