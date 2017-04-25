@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour {
 
@@ -11,6 +12,7 @@ public class GameController : MonoBehaviour {
     public void incrementarPontos(int x) {
         atualizarPontos(pontos + x);
     }
+    private List<GameObject> obstaculos;
     public Text txtMaiorPontuacao;
     public GameObject gameOverPanel;
     public GameObject pontosPanel;
@@ -38,6 +40,12 @@ public class GameController : MonoBehaviour {
     }
 
     public void PlayerVoltou() {
+        while (obstaculos.Count > 0) {
+            GameObject obj = obstaculos[0];
+            if (obstaculos.Remove(obj)) {
+                Destroy(obj);
+            }
+        }
         estado = Estado.AguardandoComecar;
         menuCamera.SetActive(true);
         menuPanel.SetActive(true);
@@ -45,9 +53,16 @@ public class GameController : MonoBehaviour {
         pontosPanel.SetActive(false);
         GameObject.Find("Nave").GetComponent<PlayerControllerFINAL>().recomecar();
     }
+    IEnumerator DestruirObstaculo(GameObject obj) {
+        yield return new WaitForSeconds(tempoDestruicao);
+        if (obstaculos.Remove(obj)) {
+            Destroy(obj);
+        }
+    }
 
 
     void Start () {
+        obstaculos = new List<GameObject>();
         estado = Estado.AguardandoComecar;
         PlayerPrefs.SetInt("HighScore", 0);
         menuCamera.SetActive(true);
@@ -61,7 +76,8 @@ public class GameController : MonoBehaviour {
         while (GameController.instancia.estado == Estado.Jogando) {
             Vector3 pos = new Vector3(4.3f, Random.Range(-3f, 3f), 3.13f);
             GameObject obj = Instantiate(obstaculo, pos, Quaternion.identity) as GameObject;
-            Destroy(obj, tempoDestruicao);
+            obstaculos.Add(obj);
+            StartCoroutine(DestruirObstaculo(obj));
             yield return new WaitForSeconds(espera);
         }
     }
